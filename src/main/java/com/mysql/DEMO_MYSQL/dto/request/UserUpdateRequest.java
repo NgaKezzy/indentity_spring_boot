@@ -4,22 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 
-public class UserCreationRequest {
-    private  String userName;
+public class UserUpdateRequest {
     private  String passWord;
     private  String firstName;
     private String lastName;
 
     @JsonFormat(pattern = "yyyy-M-d")
     private LocalDate dob;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getPassWord() {
         return passWord;
