@@ -5,6 +5,7 @@ import com.mysql.DEMO_MYSQL.dto.request.UserUpdateRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping()
-    ApiResponse<User> createUser(@RequestBody UserCreationRequest request) {
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
         ApiResponse<User> response = new ApiResponse<>();
         response.setMessage("User created successfully");
         response.setSuccess(true);

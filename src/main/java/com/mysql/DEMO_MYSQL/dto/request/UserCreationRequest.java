@@ -1,11 +1,13 @@
 package com.mysql.DEMO_MYSQL.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 public class UserCreationRequest {
     private  String userName;
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private  String passWord;
     private  String firstName;
     private String lastName;
