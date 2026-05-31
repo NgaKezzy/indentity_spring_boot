@@ -8,7 +8,7 @@ spring:
     name: DEMO_MYSQL
 
   datasource:
-    url: jdbc:mysql://localhost:3306/indentity_service
+    url: jdbc:mysql://localhost:3306/indentity_service?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: 120299
     driver-class-name: com.mysql.cj.jdbc.Driver

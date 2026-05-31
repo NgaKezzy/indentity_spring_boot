@@ -20,6 +20,7 @@ public class UserController {
     ApiResponse<User> createUser(@RequestBody UserCreationRequest request) {
         ApiResponse<User> response = new ApiResponse<>();
         response.setMessage("User created successfully");
+        response.setSuccess(true);
         response.setData(userService.createUser(request));
         return response;
     }
@@ -28,6 +29,7 @@ public class UserController {
     ApiResponse<List<User>> getUsers() {
         ApiResponse<List<User>> response = new ApiResponse<>();
         response.setMessage("Success");
+        response.setSuccess(true);
         response.setData(userService.getUsers());
         return response;
     }
@@ -36,6 +38,7 @@ public class UserController {
     ApiResponse<User> getUser(@PathVariable("userId") String userId) {
         ApiResponse<User> response = new ApiResponse<>();
         response.setMessage("Success");
+        response.setSuccess(true);
         response.setData(userService.getUser(userId));
         return response;
     }
@@ -44,6 +47,7 @@ public class UserController {
     ApiResponse<User> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,@PathVariable("userId")  String userId){
         ApiResponse<User> response = new ApiResponse<>();
         response.setMessage("Success");
+        response.setSuccess(true);
         response.setData(userService.updateUser(userUpdateRequest,userId));
         return response;
     }
