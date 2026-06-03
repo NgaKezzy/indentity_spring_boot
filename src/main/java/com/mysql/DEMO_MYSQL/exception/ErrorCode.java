@@ -1,7 +1,9 @@
 package com.mysql.DEMO_MYSQL.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCode {
     USER_EXISTED(1001, "User existed", HttpStatus.CONFLICT),
     USER_NOT_FOUND(1002, "User not found", HttpStatus.NOT_FOUND),
@@ -22,15 +24,5 @@ public enum ErrorCode {
         this.httpStatus = httpStatus;
     }
 
-    public int getCode() {
-        return code;
-    }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
 }
