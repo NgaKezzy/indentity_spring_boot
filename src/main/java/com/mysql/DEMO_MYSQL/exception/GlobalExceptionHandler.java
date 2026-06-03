@@ -32,21 +32,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse<Map<String, String>>> handlingValidationException(
+    ResponseEntity<ApiResponse<Void>> handlingValidationException(
             MethodArgumentNotValidException exception) {
-        
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getFieldErrors().forEach(error -> 
-            errors.put(error.getField(), error.getDefaultMessage())
-        );
-        
-        ApiResponse<Map<String, String>> response = new ApiResponse<>();
-        response.setSuccess(false);
-        response.setCode(400);
-        response.setMessage("Validation failed");
-        response.setData(errors);  // Cần thêm field data vào ApiResponse
-        
-        return ResponseEntity.badRequest().body(response);
+
+        String enumKey = exception.getFieldError().getDefaultMessage();
+        ErrorCode errorCode;
+
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+        } catch (IllegalArgumentException e) {
+            log.warn("Unknown validation message: {}", enumKey);
+            errorCode = ErrorCode.INVALID_REQUEST;
+        }
+
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setSuccess(false);  // ✅ Đừng quên set success = false
+        response.setCode(errorCode.getCode());
+        response.setMessage(errorCode.getMessage());
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(Exception.class)
