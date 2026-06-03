@@ -9,45 +9,57 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(value = RuntimeException.class)
-    ResponseEntity<ApiResponse<Void>> handlingRuntimeException(RuntimeException exception){
-        log.error("RuntimeException: ", exception);
-        ApiResponse<Void> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage("Error: " + exception.getMessage());
-
+    @ExceptionHandler(AppException.class)
+    ResponseEntity<ApiResponse<Void>> handlingAppException(AppException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+        
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setCode(errorCode.getCode());
+        response.setMessage(errorCode.getMessage());
+        
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(apiResponse);
+                .status(errorCode.getHttpStatus())  // Quan trọng: dùng status từ ErrorCode
+                .body(response);
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse<Void>> handlingValidationException(MethodArgumentNotValidException exception){
-        String message = exception.getFieldError() != null
-                ? exception.getFieldError().getDefaultMessage()
-                : exception.getMessage();
-        log.error("Validation error: {}", message);
-        ApiResponse<Void> apiResponse = new ApiResponse<>();
-        apiResponse.setSuccess(false);
-        apiResponse.setMessage(message);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(apiResponse);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse<Map<String, String>>> handlingValidationException(
+            MethodArgumentNotValidException exception) {
+        
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error -> 
+            errors.put(error.getField(), error.getDefaultMessage())
+        );
+        
+        ApiResponse<Map<String, String>> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setCode(400);
+        response.setMessage("Validation failed");
+        response.setData(errors);  // Cần thêm field data vào ApiResponse
+        
+        return ResponseEntity.badRequest().body(response);
     }
 
-    // Optional: Handle other exception types
-    @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse<Void>> handlingGenericException(Exception exception){
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ApiResponse<Void>> handlingException(Exception exception) {
         log.error("Unhandled exception: ", exception);
-        ApiResponse<Void> apiResponse = new ApiResponse<>();
-        apiResponse.setSuccess(false);
-        apiResponse.setMessage("Internal server error: " + exception.getMessage());
+        
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        response.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(apiResponse);
+                .status(ErrorCode.UNCATEGORIZED_EXCEPTION.getHttpStatus())
+                .body(response);
     }
 }
