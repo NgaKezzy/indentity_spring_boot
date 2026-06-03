@@ -1,5 +1,6 @@
 package com.mysql.DEMO_MYSQL.exception;
 
+
 public class AppException extends RuntimeException {
     private final ErrorCode errorCode;  // final + camelCase
 

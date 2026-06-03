@@ -6,16 +6,20 @@ import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+    UserService userService;
 
     @PostMapping()
     ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
@@ -45,16 +49,16 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    ApiResponse<User> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,@PathVariable("userId")  String userId){
+    ApiResponse<User> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, @PathVariable("userId") String userId) {
         ApiResponse<User> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
-        response.setData(userService.updateUser(userUpdateRequest,userId));
+        response.setData(userService.updateUser(userUpdateRequest, userId));
         return response;
     }
 
     @DeleteMapping("/{userId}")
-     String deleteUser(@PathVariable("userId")  String userId){
+    String deleteUser(@PathVariable("userId") String userId) {
         userService.deleteUser(userId);
         return "Đã xóa thành công!";
     }
