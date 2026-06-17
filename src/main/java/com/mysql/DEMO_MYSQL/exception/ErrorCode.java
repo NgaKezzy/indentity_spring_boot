@@ -12,6 +12,7 @@ public enum ErrorCode {
     PASSWORD_INVALID(1005, "Password cannot be blank", HttpStatus.BAD_REQUEST),
     PASSWORD_TOO_WEAK(1006, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(1007, "Invalid request", HttpStatus.BAD_REQUEST),
+    UN_AUTHENTICATED(1008, "Unauthenticated", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int code;

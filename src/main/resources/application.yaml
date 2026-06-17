@@ -25,3 +25,6 @@ logging:
     org.springframework: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+jwt:
+  signerKey: "da2f91f33bbc7963ca1fca742b4d58c79729e433e3ce01f838e20a9269be2391"
