@@ -2,6 +2,7 @@ package com.mysql.DEMO_MYSQL.service;
 
 import com.mysql.DEMO_MYSQL.dto.request.UserCreationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.UserUpdateRequest;
+import com.mysql.DEMO_MYSQL.dto.response.UserResponse;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
@@ -23,30 +24,35 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
 
-    public User createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUserName(request.getUserName()))
             throw new AppException(ErrorCode.USER_EXISTED);
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassWord(passwordEncoder.encode(request.getPassWord()));
-        return userRepository.save(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserResponse)
+                .toList();
     }
 
-    public User getUser(String id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not fount"));
+    public UserResponse getUser(String id) {
+        return userMapper.toUserResponse(userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found")));
     }
 
-    public User updateUser(UserUpdateRequest userUpdateRequest, String userId) {
-        User user = getUser(userId);
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user, userUpdateRequest);
-        return userRepository.save(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
     }
 }
+

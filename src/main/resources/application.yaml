@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ngakezzy?allowPublicKeyRetrieval=true&useSSL=false
     username: root
-    password: 120299
+    password: root123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

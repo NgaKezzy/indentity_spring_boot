@@ -2,6 +2,7 @@ package com.mysql.DEMO_MYSQL.mapper;
 
 import com.mysql.DEMO_MYSQL.dto.request.UserCreationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.UserUpdateRequest;
+import com.mysql.DEMO_MYSQL.dto.response.UserResponse;
 import com.mysql.DEMO_MYSQL.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -10,6 +11,8 @@ import org.mapstruct.MappingTarget;
 public interface UserMapper {
 
     User toUser(UserCreationRequest userCreationRequest);
+
+    UserResponse toUserResponse(User user);
 
     void updateUser(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
 }
