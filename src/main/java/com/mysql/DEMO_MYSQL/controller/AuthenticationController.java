@@ -37,6 +37,7 @@ public class AuthenticationController {
         var result = authenticationService.authenticate(request);
         var user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setToken(result.getToken());
         return ApiResponse.<UserResponse>builder().data(userMapper.toUserResponse(user)).success(true).build();
     }
 

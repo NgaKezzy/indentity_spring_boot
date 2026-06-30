@@ -10,6 +10,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
+@Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
     String id;
@@ -18,4 +20,5 @@ public class UserResponse {
     String lastName;
     LocalDate dob;
     Set<String> roles;
+    String token;
 }
