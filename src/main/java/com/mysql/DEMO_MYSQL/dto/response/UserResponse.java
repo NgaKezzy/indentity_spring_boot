@@ -1,13 +1,10 @@
 package com.mysql.DEMO_MYSQL.dto.response;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +17,5 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
+    Set<String> roles;
 }

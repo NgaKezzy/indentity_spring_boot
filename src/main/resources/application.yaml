@@ -6,11 +6,14 @@ server:
 spring:
   application:
     name: DEMO_MYSQL
+  output:
+    ansi:
+      enabled: ALWAYS
 
   datasource:
     url: jdbc:mysql://localhost:3306/ngakezzy?allowPublicKeyRetrieval=true&useSSL=false
     username: root
-    password: root123
+    password: 120299
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

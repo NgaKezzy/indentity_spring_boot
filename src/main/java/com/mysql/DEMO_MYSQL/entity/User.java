@@ -5,15 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @JsonPropertyOrder({"id", "userName", "passWord", "firstName", "lastName", "dob"})
 @Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
@@ -24,5 +29,7 @@ public class User {
     String firstName;
     String lastName;
     LocalDate dob;
+    Set<String> roles;
+
 
 }
