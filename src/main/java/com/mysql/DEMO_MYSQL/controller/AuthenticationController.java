@@ -35,18 +35,9 @@ public class AuthenticationController {
     @PostMapping("/login")
     ApiResponse<UserResponse> authenticate(@RequestBody AuthenticationRequest request) {
         var result = authenticationService.authenticate(request);
-      
-        if (result.isAuthenticated()) {
-            var user = userRepository.findByUserName(request.getUserName())
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-            return ApiResponse.<UserResponse>builder().data(userMapper.toUserResponse(user)).success(true).build();
-
-        }
-        // ⚠️ Cần xử lý trường hợp authenticated = false
-        return ApiResponse.<UserResponse>builder()
-                .success(false)
-                .message("Authentication failed")
-                .build();
+        var user = userRepository.findByUserName(request.getUserName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return ApiResponse.<UserResponse>builder().data(userMapper.toUserResponse(user)).success(true).build();
     }
 
     @PostMapping("/introspect")
