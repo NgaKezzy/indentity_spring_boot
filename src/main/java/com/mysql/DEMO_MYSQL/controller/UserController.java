@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     UserService userService;
 
     @PostMapping()
@@ -50,7 +53,7 @@ public class UserController {
 
     @PutMapping("/{userId}")
     ApiResponse<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
-                                 @PathVariable("userId") String userId) {
+                                         @PathVariable("userId") String userId) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
