@@ -24,7 +24,8 @@ spring:
 logging:
   level:
     root: INFO
-    com.ngakezzy: DEBUG
+    com.mysql.DEMO_MYSQL: DEBUG         # package thực tế của project
+    org.springframework.security: DEBUG  # xem chi tiết lỗi 401 từ Spring Security
     org.springframework: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
