@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -30,9 +31,11 @@ public class RoleService {
     public RoleResponse create(RoleRequest request) {
         if (roleRepository.existsByName(request.getName()))
             throw new AppException(ErrorCode.PERMISSION_EXISTED);
-        var permission = permissionRepository.findAllById(request.getPermissions());
+        Set<String> permissionNames =
+                request.getPermissions() == null ? Set.of() : request.getPermissions();
+        var permissions = permissionRepository.findAllById(permissionNames);
         Role role = roleMapper.toRole(request);
-        role.setPermissions(new HashSet<>(permission));
+        role.setPermissions(new HashSet<>(permissions));
         role = roleRepository.save(role);
         return roleMapper.toRoleResponse(role);
     }
