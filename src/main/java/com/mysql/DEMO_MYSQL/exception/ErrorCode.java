@@ -38,6 +38,7 @@ public enum ErrorCode {
     PERMISSION_EXISTED(1033, "Permission already exists", HttpStatus.CONFLICT),
     INSUFFICIENT_PERMISSIONS(1034, "Insufficient permissions to perform this action", HttpStatus.FORBIDDEN),
 
+
     // ===== RESOURCE & DATA =====
     RESOURCE_NOT_FOUND(1040, "Resource not found", HttpStatus.NOT_FOUND),
     DUPLICATE_ENTRY(1041, "Duplicate entry", HttpStatus.CONFLICT),

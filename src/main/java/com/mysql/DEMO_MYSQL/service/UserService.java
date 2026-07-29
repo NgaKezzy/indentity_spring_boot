@@ -35,7 +35,7 @@ public class UserService {
         user.setPassWord(passwordEncoder.encode(request.getPassWord()));
         HashSet<String> role = new HashSet<>();
         role.add(Role.USER.name());
-        user.setRoles(role);
+//        user.setRoles(role);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

@@ -1,6 +1,7 @@
 package com.mysql.DEMO_MYSQL.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mysql.DEMO_MYSQL.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,6 +22,6 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
     String token;
 }
