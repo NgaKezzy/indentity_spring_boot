@@ -4,10 +4,11 @@ import com.mysql.DEMO_MYSQL.dto.request.RoleRequest;
 import com.mysql.DEMO_MYSQL.dto.response.RoleResponse;
 import com.mysql.DEMO_MYSQL.entity.Role;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-
+    @Mapping(target = "permissions", ignore = true)
     Role toRole(RoleRequest request);
 
     RoleResponse toRoleResponse(Role role);

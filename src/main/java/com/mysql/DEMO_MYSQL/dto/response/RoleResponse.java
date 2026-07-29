@@ -3,6 +3,8 @@ package com.mysql.DEMO_MYSQL.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,4 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class RoleResponse {
     String name;
     String description;
+    Set<PermissionResponse> permissions;
+
 }
