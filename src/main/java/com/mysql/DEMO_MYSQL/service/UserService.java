@@ -8,6 +8,7 @@ import com.mysql.DEMO_MYSQL.enums.Role;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
 import com.mysql.DEMO_MYSQL.mapper.UserMapper;
+import com.mysql.DEMO_MYSQL.repository.RoleRepository;
 import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -56,6 +58,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user, userUpdateRequest);
+        user.setPassWord(passwordEncoder.encode(userUpdateRequest.getPassWord()));
+        var roles = roleRepository.findAllById(userUpdateRequest.getRoles());
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

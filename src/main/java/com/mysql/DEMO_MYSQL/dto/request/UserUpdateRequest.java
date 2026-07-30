@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class UserUpdateRequest {
     String passWord;
     String firstName;
     String lastName;
+    List<String> roles;
     @JsonFormat(pattern = "yyyy-M-d")
     LocalDate dob;
 }
