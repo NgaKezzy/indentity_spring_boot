@@ -55,7 +55,8 @@ public class RoleService {
         Role role = roleRepository.findById(roleName)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         role.setDescription(request.getDescription());
-        Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(request.getPermissions()));
+        Set<String> permissionNames = request.getPermissions() == null ? Set.of() : request.getPermissions();
+        Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(permissionNames));
         role.setPermissions(permissions);
         role = roleRepository.save(role);
         return roleMapper.toRoleResponse(role);

@@ -43,11 +43,11 @@ public class RoleController {
     @PutMapping("/{name}")
     ApiResponse<RoleResponse> updateRole(@RequestBody RoleUpdateRequest roleUpdateRequest,
                                          @PathVariable String name) {
-        ApiResponse<RoleResponse> response = new ApiResponse<>();
-        response.setMessage("Success");
-        response.setSuccess(true);
-        response.setData(roleService.updateRole(roleUpdateRequest, name));
-        return response;
+        return ApiResponse.<RoleResponse>builder()
+                .message("Update role successfully")
+                .success(true)
+                .data(roleService.updateRole(roleUpdateRequest, name))
+                .build();
     }
 
 }
