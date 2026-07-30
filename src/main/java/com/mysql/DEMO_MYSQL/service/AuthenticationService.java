@@ -60,7 +60,7 @@ public class AuthenticationService {
         JWTClaimsSet jwtClaimsSet =
                 new JWTClaimsSet.Builder().subject(user.getUserName()).issuer("dev.com").issueTime(new Date())
                         .expirationTime(new Date(
-                                Instant.now().plus(1, ChronoUnit.MONTHS).toEpochMilli()))
+                                Instant.now().plus(30, ChronoUnit.DAYS).toEpochMilli()))
                         .claim("scope", buildScope(user))
                         .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

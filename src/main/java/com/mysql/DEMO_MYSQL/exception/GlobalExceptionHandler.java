@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
     ResponseEntity<ApiResponse<Void>> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        log.warn("AppException occurred: {}", errorCode.getMessage());
+        log.error("AppException occurred: {}", errorCode.getMessage());
 
         ApiResponse<Void> response = new ApiResponse<>();
         response.setSuccess(false);
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     // ===== 2. XỬ LÝ ACCESS DENIED =====
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse<Void>> handlingAuthorizationDeniedException(AccessDeniedException exception) {
-        log.warn("AccessDeniedException: {}", exception.getMessage());
+        log.error("AccessDeniedException: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -75,11 +75,11 @@ public class GlobalExceptionHandler {
         try {
             errorCode = ErrorCode.valueOf(enumKey);
         } catch (IllegalArgumentException e) {
-            log.warn("Unknown validation message: {}", enumKey);
+            log.error("Unknown validation message: {}", enumKey);
             errorCode = ErrorCode.INVALID_REQUEST;
         }
 
-        log.warn("Validation failed: {} - {}", enumKey, exception.getMessage());
+        log.error("Validation failed: {} - {}", enumKey, exception.getMessage());
 
         ApiResponse<Void> response = new ApiResponse<>();
         response.setSuccess(false);
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
     // ===== 5. XỬ LÝ AUTHENTICATION =====
     @ExceptionHandler(AuthenticationException.class)
     ResponseEntity<ApiResponse<Void>> handlingAuthenticationException(AuthenticationException exception) {
-        log.warn("Authentication failed: {}", exception.getMessage());
+        log.error("Authentication failed: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.UN_AUTHENTICATED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -118,7 +118,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     ResponseEntity<ApiResponse<Void>> handlingBadCredentialsException(BadCredentialsException exception) {
-        log.warn("Bad credentials: {}", exception.getMessage());
+        log.error("Bad credentials: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.INVALID_CREDENTIALS;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -131,7 +131,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     ResponseEntity<ApiResponse<Void>> handlingUsernameNotFoundException(UsernameNotFoundException exception) {
-        log.warn("Username not found: {}", exception.getMessage());
+        log.error("Username not found: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.USER_NOT_FOUND;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -172,7 +172,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     ResponseEntity<ApiResponse<Void>> handlingSQLIntegrityConstraintViolationException(
             SQLIntegrityConstraintViolationException exception) {
-        log.warn("Data integrity violation: {}", exception.getMessage());
+        log.error("Data integrity violation: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.DATA_INTEGRITY_VIOLATION;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -186,7 +186,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<ApiResponse<Void>> handlingDataIntegrityViolationException(
             DataIntegrityViolationException exception) {
-        log.warn("Data integrity violation: {}", exception.getMessage());
+        log.error("Data integrity violation: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.DATA_INTEGRITY_VIOLATION;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -199,7 +199,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateKeyException.class)
     ResponseEntity<ApiResponse<Void>> handlingDuplicateKeyException(DuplicateKeyException exception) {
-        log.warn("Duplicate key error: {}", exception.getMessage());
+        log.error("Duplicate key error: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.DUPLICATE_ENTRY;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -213,7 +213,7 @@ public class GlobalExceptionHandler {
     // ===== 7. XỬ LÝ VALIDATION (ConstraintViolationException) =====
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<ApiResponse<Void>> handlingConstraintViolationException(ConstraintViolationException exception) {
-        log.warn("Constraint violation: {}", exception.getMessage());
+        log.error("Constraint violation: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.CONSTRAINT_VIOLATION;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -228,7 +228,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     ResponseEntity<ApiResponse<Void>> handlingHttpRequestMethodNotSupportedException(
             HttpRequestMethodNotSupportedException exception) {
-        log.warn("Method not supported: {}", exception.getMessage());
+        log.error("Method not supported: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.METHOD_NOT_ALLOWED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -242,7 +242,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     ResponseEntity<ApiResponse<Void>> handlingHttpMediaTypeNotSupportedException(
             HttpMediaTypeNotSupportedException exception) {
-        log.warn("Media type not supported: {}", exception.getMessage());
+        log.error("Media type not supported: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.MEDIA_TYPE_UNSUPPORTED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -255,7 +255,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     ResponseEntity<ApiResponse<Void>> handlingNoHandlerFoundException(NoHandlerFoundException exception) {
-        log.warn("No handler found: {}", exception.getMessage());
+        log.error("No handler found: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.RESOURCE_NOT_FOUND;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -270,7 +270,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     ResponseEntity<ApiResponse<Void>> handlingMissingServletRequestParameterException(
             MissingServletRequestParameterException exception) {
-        log.warn("Missing request parameter: {}", exception.getMessage());
+        log.error("Missing request parameter: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FIELD_REQUIRED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -283,7 +283,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     ResponseEntity<ApiResponse<Void>> handlingMissingRequestHeaderException(MissingRequestHeaderException exception) {
-        log.warn("Missing request header: {}", exception.getMessage());
+        log.error("Missing request header: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FIELD_REQUIRED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -296,7 +296,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingPathVariableException.class)
     ResponseEntity<ApiResponse<Void>> handlingMissingPathVariableException(MissingPathVariableException exception) {
-        log.warn("Missing path variable: {}", exception.getMessage());
+        log.error("Missing path variable: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FIELD_REQUIRED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -311,7 +311,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     ResponseEntity<ApiResponse<Void>> handlingMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException exception) {
-        log.warn("Type mismatch: {}", exception.getMessage());
+        log.error("Type mismatch: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FIELD_INVALID;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -326,7 +326,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiResponse<Void>> handlingHttpMessageNotReadableException(
             HttpMessageNotReadableException exception) {
-        log.warn("Message not readable: {}", exception.getMessage());
+        log.error("Message not readable: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.BAD_REQUEST;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -340,7 +340,7 @@ public class GlobalExceptionHandler {
     // ===== 12. XỬ LÝ FILE UPLOAD =====
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     ResponseEntity<ApiResponse<Void>> handlingMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
-        log.warn("File size exceeded: {}", exception.getMessage());
+        log.error("File size exceeded: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FILE_TOO_LARGE;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -353,7 +353,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MultipartException.class)
     ResponseEntity<ApiResponse<Void>> handlingMultipartException(MultipartException exception) {
-        log.warn("Multipart error: {}", exception.getMessage());
+        log.error("Multipart error: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.FILE_UPLOAD_FAILED;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -381,7 +381,7 @@ public class GlobalExceptionHandler {
     // ===== 14. XỬ LÝ ILLEGAL ARGUMENT =====
     @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<ApiResponse<Void>> handlingIllegalArgumentException(IllegalArgumentException exception) {
-        log.warn("Illegal argument: {}", exception.getMessage());
+        log.error("Illegal argument: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -395,7 +395,7 @@ public class GlobalExceptionHandler {
     // ===== 15. XỬ LÝ ILLEGAL STATE =====
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<ApiResponse<Void>> handlingIllegalStateException(IllegalStateException exception) {
-        log.warn("Illegal state: {}", exception.getMessage());
+        log.error("Illegal state: {}", exception.getMessage());
         ErrorCode errorCode = ErrorCode.INVALID_OPERATION;
 
         ApiResponse<Void> response = new ApiResponse<>();
