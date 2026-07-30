@@ -1,8 +1,8 @@
 package com.mysql.DEMO_MYSQL.mapper;
 
-import com.mysql.DEMO_MYSQL.dto.request.UserCreationRequest;
-import com.mysql.DEMO_MYSQL.dto.request.UserUpdateRequest;
-import com.mysql.DEMO_MYSQL.dto.response.UserResponse;
+import com.mysql.DEMO_MYSQL.dto.request.user.UserCreationRequest;
+import com.mysql.DEMO_MYSQL.dto.request.user.UserUpdateRequest;
+import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

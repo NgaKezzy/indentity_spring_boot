@@ -31,7 +31,7 @@ public class ApplicationInitConfig {
             if (userRepository.findByUserName("admin").isEmpty()) {
                 // Lấy Role ADMIN entity từ DB (key là tên enum: "ADMIN")
                 Optional<Role> adminRole = roleRepository.findById(
-                        com.mysql.DEMO_MYSQL.enums.Role.ADMIN.name()
+                        "ADMIN"
                 );
                 Set<Role> roles = new HashSet<>();
                 adminRole.ifPresent(roles::add);

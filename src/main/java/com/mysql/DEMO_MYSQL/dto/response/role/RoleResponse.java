@@ -1,5 +1,6 @@
-package com.mysql.DEMO_MYSQL.dto.response;
+package com.mysql.DEMO_MYSQL.dto.response.role;
 
+import com.mysql.DEMO_MYSQL.dto.response.permission.PermissionResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,5 +15,6 @@ public class RoleResponse {
     String name;
     String description;
     Set<PermissionResponse> permissions;
+
 
 }

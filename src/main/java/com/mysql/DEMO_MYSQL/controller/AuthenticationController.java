@@ -4,7 +4,7 @@ import com.mysql.DEMO_MYSQL.dto.request.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.dto.response.IntroSpectTokenResponse;
-import com.mysql.DEMO_MYSQL.dto.response.UserResponse;
+import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
 import com.mysql.DEMO_MYSQL.mapper.UserMapper;

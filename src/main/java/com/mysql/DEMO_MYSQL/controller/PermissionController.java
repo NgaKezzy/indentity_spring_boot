@@ -1,8 +1,8 @@
 package com.mysql.DEMO_MYSQL.controller;
 
-import com.mysql.DEMO_MYSQL.dto.request.PermissionRequest;
+import com.mysql.DEMO_MYSQL.dto.request.permission.PermissionRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
-import com.mysql.DEMO_MYSQL.dto.response.PermissionResponse;
+import com.mysql.DEMO_MYSQL.dto.response.permission.PermissionResponse;
 import com.mysql.DEMO_MYSQL.service.PermissionService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

@@ -1,7 +1,7 @@
 package com.mysql.DEMO_MYSQL.service;
 
-import com.mysql.DEMO_MYSQL.dto.request.PermissionRequest;
-import com.mysql.DEMO_MYSQL.dto.response.PermissionResponse;
+import com.mysql.DEMO_MYSQL.dto.request.permission.PermissionRequest;
+import com.mysql.DEMO_MYSQL.dto.response.permission.PermissionResponse;
 import com.mysql.DEMO_MYSQL.entity.Permission;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;

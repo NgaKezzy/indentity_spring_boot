@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.request;
+package com.mysql.DEMO_MYSQL.dto.request.permission;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

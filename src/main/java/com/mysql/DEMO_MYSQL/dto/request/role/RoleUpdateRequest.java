@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.request;
+package com.mysql.DEMO_MYSQL.dto.request.role;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

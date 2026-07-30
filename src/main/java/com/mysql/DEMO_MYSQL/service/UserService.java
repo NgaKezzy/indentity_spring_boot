@@ -1,10 +1,10 @@
 package com.mysql.DEMO_MYSQL.service;
 
-import com.mysql.DEMO_MYSQL.dto.request.UserCreationRequest;
-import com.mysql.DEMO_MYSQL.dto.request.UserUpdateRequest;
-import com.mysql.DEMO_MYSQL.dto.response.UserResponse;
+import com.mysql.DEMO_MYSQL.dto.request.user.UserCreationRequest;
+import com.mysql.DEMO_MYSQL.dto.request.user.UserUpdateRequest;
+import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
+import com.mysql.DEMO_MYSQL.entity.Role;
 import com.mysql.DEMO_MYSQL.entity.User;
-import com.mysql.DEMO_MYSQL.enums.Role;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
 import com.mysql.DEMO_MYSQL.mapper.UserMapper;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +36,14 @@ public class UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
         User user = userMapper.toUser(request);
         user.setPassWord(passwordEncoder.encode(request.getPassWord()));
-        HashSet<String> role = new HashSet<>();
-        role.add(Role.USER.name());
-//        user.setRoles(role);
+        Set<Role> role = new HashSet<>();
+
+        Role userRole = roleRepository.findById("USER")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.request;
+package com.mysql.DEMO_MYSQL.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;

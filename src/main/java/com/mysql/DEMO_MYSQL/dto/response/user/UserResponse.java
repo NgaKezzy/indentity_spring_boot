@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.response;
+package com.mysql.DEMO_MYSQL.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mysql.DEMO_MYSQL.entity.Role;

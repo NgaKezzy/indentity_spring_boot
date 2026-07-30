@@ -93,10 +93,7 @@ public class AuthenticationService {
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRoles().forEach(role -> {
                 stringJoiner.add(role.getName());
-                role.getPermissions().forEach(permission -> {
-                    if (CollectionUtils.isEmpty(role.getPermissions()))
-                        stringJoiner.add(permission.getName());
-                });
+               
             });
         }
         return stringJoiner.toString();

@@ -1,8 +1,8 @@
 package com.mysql.DEMO_MYSQL.service;
 
-import com.mysql.DEMO_MYSQL.dto.request.RoleRequest;
-import com.mysql.DEMO_MYSQL.dto.request.RoleUpdateRequest;
-import com.mysql.DEMO_MYSQL.dto.response.RoleResponse;
+import com.mysql.DEMO_MYSQL.dto.request.role.RoleRequest;
+import com.mysql.DEMO_MYSQL.dto.request.role.RoleUpdateRequest;
+import com.mysql.DEMO_MYSQL.dto.response.role.RoleResponse;
 import com.mysql.DEMO_MYSQL.entity.Permission;
 import com.mysql.DEMO_MYSQL.entity.Role;
 import com.mysql.DEMO_MYSQL.exception.AppException;

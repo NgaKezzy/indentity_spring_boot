@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.response;
+package com.mysql.DEMO_MYSQL.dto.response.permission;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
