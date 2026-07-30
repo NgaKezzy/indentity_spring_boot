@@ -1,7 +1,9 @@
 package com.mysql.DEMO_MYSQL.service;
 
 import com.mysql.DEMO_MYSQL.dto.request.RoleRequest;
+import com.mysql.DEMO_MYSQL.dto.request.RoleUpdateRequest;
 import com.mysql.DEMO_MYSQL.dto.response.RoleResponse;
+import com.mysql.DEMO_MYSQL.entity.Permission;
 import com.mysql.DEMO_MYSQL.entity.Role;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
@@ -47,5 +49,15 @@ public class RoleService {
 
     public void delete(String name) {
         roleRepository.deleteById(name);
+    }
+
+    public RoleResponse updateRole(RoleUpdateRequest request, String roleName) {
+        Role role = roleRepository.findById(roleName)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        role.setDescription(request.getDescription());
+        Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(request.getPermissions()));
+        role.setPermissions(permissions);
+        role = roleRepository.save(role);
+        return roleMapper.toRoleResponse(role);
     }
 }
