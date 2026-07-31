@@ -24,7 +24,7 @@ public class UserCreationRequest {
     String firstName;
     String lastName;
     @JsonFormat(pattern = "yyyy-M-d")
-    @DobConstraints(min = 18)
+    @DobConstraints(min = 18, message = "DOB_UNDER_AGE")
     LocalDate dob;
 
 

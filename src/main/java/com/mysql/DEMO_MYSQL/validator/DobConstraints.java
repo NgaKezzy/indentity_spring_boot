@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 })
 public @interface DobConstraints {
 
-    String message() default "DOB_UNDER_AGE";
+    String message() default "Date of Birth must be in the past";
 
     int min();
 
