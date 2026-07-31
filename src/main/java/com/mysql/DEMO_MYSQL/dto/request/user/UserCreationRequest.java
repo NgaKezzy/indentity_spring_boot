@@ -1,6 +1,7 @@
 package com.mysql.DEMO_MYSQL.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mysql.DEMO_MYSQL.validator.DobConstraints;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -23,6 +24,7 @@ public class UserCreationRequest {
     String firstName;
     String lastName;
     @JsonFormat(pattern = "yyyy-M-d")
+    @DobConstraints(min = 18)
     LocalDate dob;
 
 

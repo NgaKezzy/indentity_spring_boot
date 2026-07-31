@@ -21,7 +21,8 @@ public class UserResponse {
     String userName;
     String firstName;
     String lastName;
+    String token;
     LocalDate dob;
     Set<Role> roles;
-    String token;
+
 }

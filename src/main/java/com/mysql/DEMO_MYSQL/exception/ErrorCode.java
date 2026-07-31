@@ -55,6 +55,7 @@ public enum ErrorCode {
     DATE_INVALID(1056, "Invalid date format", HttpStatus.BAD_REQUEST),
     DATE_FUTURE(1057, "Date cannot be in the future", HttpStatus.BAD_REQUEST),
     DATE_PAST(1058, "Date cannot be in the past", HttpStatus.BAD_REQUEST),
+    DOB_UNDER_AGE(1059, "User must be at least 18 years old", HttpStatus.BAD_REQUEST),
 
     // ===== BUSINESS LOGIC =====
     OPERATION_NOT_ALLOWED(1060, "Operation not allowed", HttpStatus.FORBIDDEN),
