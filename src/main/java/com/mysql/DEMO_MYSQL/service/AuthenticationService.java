@@ -2,11 +2,14 @@ package com.mysql.DEMO_MYSQL.service;
 
 import com.mysql.DEMO_MYSQL.dto.request.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.IntroSpectTokenRequest;
+import com.mysql.DEMO_MYSQL.dto.request.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.response.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.IntroSpectTokenResponse;
+import com.mysql.DEMO_MYSQL.entity.InvalidatedToken;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
+import com.mysql.DEMO_MYSQL.repository.InvalidatedTokenRepository;
 import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -29,6 +32,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -36,6 +40,7 @@ import java.util.StringJoiner;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -61,6 +66,7 @@ public class AuthenticationService {
                 new JWTClaimsSet.Builder().subject(user.getUserName()).issuer("dev.com").issueTime(new Date())
                         .expirationTime(new Date(
                                 Instant.now().plus(30, ChronoUnit.DAYS).toEpochMilli()))
+                        .jwtID(UUID.randomUUID().toString())
                         .claim("scope", buildScope(user))
                         .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -79,13 +85,30 @@ public class AuthenticationService {
     public IntroSpectTokenResponse introSpectToken(IntroSpectTokenRequest request) throws JOSEException,
             ParseException {
         var token = request.getToken();
+
+        var jwtToken = verifyToken(token);
+
+        return IntroSpectTokenResponse.builder().valid(true).build();
+    }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+
+        var signToken = verifyToken(request.getToken());
+        String jit = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
         var expireDate = signedJWT.getJWTClaimsSet().getExpirationTime();
         var verified = signedJWT.verify(jwsVerifier);
-
-        return IntroSpectTokenResponse.builder().valid(verified && expireDate.after(new Date())).build();
-
+        if (!(verified && expireDate.after(new Date()))) {
+            throw new AppException(ErrorCode.UN_AUTHENTICATED);
+        }
+        return signedJWT;
     }
 
     private String buildScope(User user) {
@@ -93,9 +116,11 @@ public class AuthenticationService {
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRoles().forEach(role -> {
                 stringJoiner.add(role.getName());
-               
+
             });
         }
         return stringJoiner.toString();
     }
+
+
 }

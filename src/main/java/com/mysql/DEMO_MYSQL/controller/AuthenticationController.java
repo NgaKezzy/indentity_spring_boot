@@ -2,6 +2,7 @@ package com.mysql.DEMO_MYSQL.controller;
 
 import com.mysql.DEMO_MYSQL.dto.request.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.IntroSpectTokenRequest;
+import com.mysql.DEMO_MYSQL.dto.request.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.dto.response.IntroSpectTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
@@ -48,5 +49,13 @@ public class AuthenticationController {
         var result = authenticationService.introSpectToken(request);
 
         return ApiResponse.<IntroSpectTokenResponse>builder().data(result).success(true).build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder().success(true).build();
     }
 }

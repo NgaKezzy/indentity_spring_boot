@@ -1,7 +1,5 @@
 package com.mysql.DEMO_MYSQL.configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +24,8 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    private static final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/login", "/auth/introspect"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/login", "/auth/introspect", "/auth/logout"};
     private static final String[] ADMIN_ENDPOINTS = {"/users"};
 
 
