@@ -1,6 +1,7 @@
 package com.mysql.DEMO_MYSQL.exception;
 
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +30,14 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Map;
 import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final String MIN_ATTRIBUTE = "min";
 
     // ===== 1. XỬ LÝ APPEXCEPTION (CUSTOM) =====
     @ExceptionHandler(AppException.class)
@@ -71,9 +74,13 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse<Void>> handlingValidationException(MethodArgumentNotValidException exception) {
         String enumKey = Objects.requireNonNull(exception.getFieldError()).getDefaultMessage();
         ErrorCode errorCode;
-
+        Map<String, Object> attributes = null;
         try {
             errorCode = ErrorCode.valueOf(enumKey);
+            var constraintsViolation = exception.getBindingResult().getAllErrors().get(0)
+                    .unwrap(ConstraintViolation.class);
+            attributes = constraintsViolation.getConstraintDescriptor().getAttributes();
+            log.info(attributes.toString());
         } catch (IllegalArgumentException e) {
             log.error("Unknown validation message: {}", enumKey);
             errorCode = ErrorCode.INVALID_REQUEST;
@@ -84,7 +91,8 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = new ApiResponse<>();
         response.setSuccess(false);
         response.setCode(errorCode.getCode());
-        response.setMessage(errorCode.getMessage());
+        response.setMessage(Objects.nonNull(attributes) ? mapAttribute(errorCode.getMessage(),
+                attributes) : errorCode.getMessage());
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
@@ -420,5 +428,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
- 
+
+    private String mapAttribute(String message, Map<String, Object> attributes) {
+        String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));
+        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+    }
+
+
 }
