@@ -85,10 +85,14 @@ public class AuthenticationService {
     public IntroSpectTokenResponse introSpectToken(IntroSpectTokenRequest request) throws JOSEException,
             ParseException {
         var token = request.getToken();
+        boolean isValid = true;
+        try {
+            var jwtToken = verifyToken(token);
 
-        var jwtToken = verifyToken(token);
-
-        return IntroSpectTokenResponse.builder().valid(true).build();
+        } catch (Exception e) {
+            isValid = false;
+        }
+        return IntroSpectTokenResponse.builder().valid(isValid).build();
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
@@ -106,6 +110,9 @@ public class AuthenticationService {
         var expireDate = signedJWT.getJWTClaimsSet().getExpirationTime();
         var verified = signedJWT.verify(jwsVerifier);
         if (!(verified && expireDate.after(new Date()))) {
+            throw new AppException(ErrorCode.UN_AUTHENTICATED);
+        }
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
             throw new AppException(ErrorCode.UN_AUTHENTICATED);
         }
         return signedJWT;
