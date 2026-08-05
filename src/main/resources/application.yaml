@@ -32,3 +32,5 @@ logging:
 
 jwt:
   signerKey: "da2f91f33bbc7963ca1fca742b4d58c79729e433e3ce01f838e20a9269be2391"
+  valid-duration: 1 # in hours
+  refreshable-duration: 120 #in day
