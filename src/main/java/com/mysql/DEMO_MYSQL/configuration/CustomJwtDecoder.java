@@ -1,6 +1,6 @@
 package com.mysql.DEMO_MYSQL.configuration;
 
-import com.mysql.DEMO_MYSQL.dto.request.IntroSpectTokenRequest;
+import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +22,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     private String signerKey;
     final private AuthenticationService authenticationService;
 
+
     public CustomJwtDecoder(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
@@ -30,6 +31,7 @@ public class CustomJwtDecoder implements JwtDecoder {
 
     @Override
     public Jwt decode(String token) throws JwtException {
+
 
         try {
             var response = authenticationService.introSpectToken(

@@ -1,4 +1,4 @@
-package com.mysql.DEMO_MYSQL.dto.request;
+package com.mysql.DEMO_MYSQL.dto.response.authent;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntroSpectTokenRequest {
+public class AuthenticationResponse {
     String token;
+    boolean authenticated;
 }

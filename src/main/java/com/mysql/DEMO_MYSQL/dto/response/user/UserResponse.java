@@ -22,6 +22,7 @@ public class UserResponse {
     String firstName;
     String lastName;
     String token;
+    String refreshToken;
     LocalDate dob;
     Set<Role> roles;
 

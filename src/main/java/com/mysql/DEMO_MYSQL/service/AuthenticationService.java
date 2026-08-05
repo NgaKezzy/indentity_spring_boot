@@ -1,10 +1,11 @@
 package com.mysql.DEMO_MYSQL.service;
 
-import com.mysql.DEMO_MYSQL.dto.request.AuthenticationRequest;
-import com.mysql.DEMO_MYSQL.dto.request.IntroSpectTokenRequest;
-import com.mysql.DEMO_MYSQL.dto.request.LogoutRequest;
-import com.mysql.DEMO_MYSQL.dto.response.AuthenticationResponse;
-import com.mysql.DEMO_MYSQL.dto.response.IntroSpectTokenResponse;
+import com.mysql.DEMO_MYSQL.dto.request.authent.AuthenticationRequest;
+import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
+import com.mysql.DEMO_MYSQL.dto.request.authent.LogoutRequest;
+import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
+import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
+import com.mysql.DEMO_MYSQL.dto.response.authent.IntroSpectTokenResponse;
 import com.mysql.DEMO_MYSQL.entity.InvalidatedToken;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.AppException;
@@ -102,6 +103,26 @@ public class AuthenticationService {
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
         InvalidatedToken invalidatedToken = InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
         invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    public AuthenticationResponse refreshToken(RefreshRequest request)
+            throws ParseException, JOSEException {
+
+        SignedJWT signedJWT = verifyToken(request.getToken());
+        String username = signedJWT.getJWTClaimsSet().getSubject();
+
+        logout(LogoutRequest.builder()
+                .token(request.getToken())
+                .build());
+
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        String token = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .authenticated(true)
+                .token(token)
+                .build();
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
