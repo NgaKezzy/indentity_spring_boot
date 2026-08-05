@@ -7,6 +7,7 @@ import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.IntroSpectTokenResponse;
+import com.mysql.DEMO_MYSQL.dto.response.authent.RefreshTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
@@ -14,6 +15,7 @@ import com.mysql.DEMO_MYSQL.mapper.UserMapper;
 import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.mysql.DEMO_MYSQL.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,6 +46,7 @@ public class AuthenticationController {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         UserResponse userResponse = userMapper.toUserResponse(user);
         userResponse.setToken(result.getToken());
+        userResponse.setRefreshToken(result.getRefreshToken());
         return ApiResponse.<UserResponse>builder().data(userResponse).success(true).build();
     }
 
@@ -63,9 +66,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request)
+    ApiResponse<RefreshTokenResponse> refreshToken(@RequestBody @Valid RefreshRequest request)
             throws ParseException, JOSEException {
-        AuthenticationResponse authenticationResponse = authenticationService.refreshToken(request);
-        return ApiResponse.<AuthenticationResponse>builder().data(authenticationResponse).success(true).build();
+        RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken(request);
+        return ApiResponse.<RefreshTokenResponse>builder().data(refreshTokenResponse).success(true).build();
     }
 }
