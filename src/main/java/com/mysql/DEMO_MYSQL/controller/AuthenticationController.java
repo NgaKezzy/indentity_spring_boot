@@ -16,6 +16,9 @@ import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.mysql.DEMO_MYSQL.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +35,8 @@ import java.text.ParseException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Authentication", description = "Đăng nhập và quản lý JWT")
+@SecurityRequirements
 public class AuthenticationController {
     AuthenticationService authenticationService;
     UserRepository userRepository;
@@ -40,6 +45,7 @@ public class AuthenticationController {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping("/login")
+    @Operation(summary = "Đăng nhập", description = "Xác thực tài khoản và trả về access token cùng refresh token")
     ApiResponse<UserResponse> authenticate(@RequestBody AuthenticationRequest request) {
         var result = authenticationService.authenticate(request);
         var user = userRepository.findByUserName(request.getUserName())
@@ -51,6 +57,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/introspect")
+    @Operation(summary = "Kiểm tra token", description = "Kiểm tra JWT còn hợp lệ hay không")
     ApiResponse<IntroSpectTokenResponse> introSpectToken(@RequestBody IntroSpectTokenRequest request)
             throws ParseException, JOSEException {
         var result = authenticationService.introSpectToken(request);
@@ -59,6 +66,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Đăng xuất", description = "Vô hiệu hóa token hiện tại")
     ApiResponse<Void> logout(@RequestBody LogoutRequest request)
             throws ParseException, JOSEException {
         authenticationService.logout(request);
@@ -66,6 +74,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "Làm mới token", description = "Cấp access token mới từ refresh token")
     ApiResponse<RefreshTokenResponse> refreshToken(@RequestBody @Valid RefreshRequest request)
             throws ParseException, JOSEException {
         RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken(request);

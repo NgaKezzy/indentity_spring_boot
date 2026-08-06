@@ -6,6 +6,9 @@ import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.service.UserService;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,12 +22,14 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Users", description = "Quản lý người dùng")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     UserService userService;
 
     @PostMapping()
+    @Operation(summary = "Tạo người dùng")
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("User created successfully");
@@ -34,6 +39,7 @@ public class UserController {
     }
 
     @GetMapping()
+    @Operation(summary = "Lấy danh sách người dùng")
     ApiResponse<List<UserResponse>> getUsers() {
         ApiResponse<List<UserResponse>> response = new ApiResponse<>();
         response.setMessage("Success");
@@ -43,7 +49,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+    @Operation(summary = "Lấy thông tin người dùng")
+    ApiResponse<UserResponse> getUser(@Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
@@ -52,8 +59,9 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
+    @Operation(summary = "Cập nhật người dùng")
     ApiResponse<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
-                                         @PathVariable("userId") String userId) {
+                                         @Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
@@ -62,10 +70,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    String deleteUser(@PathVariable("userId") String userId) {
+    @Operation(summary = "Xóa người dùng")
+    String deleteUser(@Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
         userService.deleteUser(userId);
         return "Đã xóa thành công!";
     }
 
 }
-
