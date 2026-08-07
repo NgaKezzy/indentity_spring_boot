@@ -5,10 +5,10 @@ import com.mysql.DEMO_MYSQL.dto.request.user.UserUpdateRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.service.UserService;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +34,7 @@ public class UserController {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("User created successfully");
         response.setSuccess(true);
+        response.setCode(1000);
         response.setData(userService.createUser(request));
         return response;
     }
@@ -41,19 +42,17 @@ public class UserController {
     @GetMapping()
     @Operation(summary = "Lấy danh sách người dùng")
     ApiResponse<List<UserResponse>> getUsers() {
-        ApiResponse<List<UserResponse>> response = new ApiResponse<>();
-        response.setMessage("Success");
-        response.setSuccess(true);
-        response.setData(userService.getUsers());
-        return response;
+        return ApiResponse.<List<UserResponse>>builder().message("Success").code(1000).success(true)
+                .data(userService.getUsers()).build();
     }
 
     @GetMapping("/{userId}")
     @Operation(summary = "Lấy thông tin người dùng")
-    ApiResponse<UserResponse> getUser(@Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
+    ApiResponse<UserResponse> getUser(@PathVariable @Parameter(description = "ID người dùng") String userId) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
+        response.setCode(1000);
         response.setData(userService.getUser(userId));
         return response;
     }
@@ -61,7 +60,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @Operation(summary = "Cập nhật người dùng")
     ApiResponse<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
-                                         @Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
+                                         @PathVariable @Parameter(description = "ID người dùng") String userId) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setMessage("Success");
         response.setSuccess(true);
@@ -71,7 +70,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @Operation(summary = "Xóa người dùng")
-    String deleteUser(@Parameter(description = "ID người dùng") @PathVariable("userId") String userId) {
+    String deleteUser(@PathVariable @Parameter(description = "ID người dùng") String userId) {
         userService.deleteUser(userId);
         return "Đã xóa thành công!";
     }
