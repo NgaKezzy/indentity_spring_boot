@@ -8,9 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class DemoMysqlApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DemoMysqlApplication.class, args);
-
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(DemoMysqlApplication.class, args);
+  }
 }

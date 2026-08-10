@@ -1,13 +1,10 @@
 package com.mysql.DEMO_MYSQL.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 @JsonPropertyOrder({"name", "description"})
@@ -18,9 +15,7 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
-    @Id
-    String name;
-    String description;
-    @ManyToMany
-    Set<Permission> permissions;
+  @Id String name;
+  String description;
+  @ManyToMany Set<Permission> permissions;
 }

@@ -25,106 +25,115 @@ import tools.jackson.databind.ObjectMapper;
 @WebMvcTest(AuthenticationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AuthenticationControllerTest {
-    @Autowired
-    MockMvc mockMvc;
+  @Autowired MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+  @Autowired ObjectMapper objectMapper;
 
-    @MockitoBean
-    AuthenticationService authenticationService;
+  @MockitoBean AuthenticationService authenticationService;
 
-    @Test
-    void authenticate_success() throws Exception {
-        AuthenticationRequest request = AuthenticationRequest.builder()
-                .userName("ngakezzy")
-                .passWord("12345678")
-                .build();
-        UserResponse userResponse = UserResponse.builder()
-                .id("user-id")
-                .userName("ngakezzy")
-                .token("access-token")
-                .refreshToken("refresh-token")
-                .build();
-        Mockito.when(authenticationService.authenticate(ArgumentMatchers.any()))
-                .thenReturn(userResponse);
+  @Test
+  void authenticate_success() throws Exception {
+    AuthenticationRequest request =
+        AuthenticationRequest.builder().userName("ngakezzy").passWord("12345678").build();
+    UserResponse userResponse =
+        UserResponse.builder()
+            .id("user-id")
+            .userName("ngakezzy")
+            .token("access-token")
+            .refreshToken("refresh-token")
+            .build();
+    Mockito.when(authenticationService.authenticate(ArgumentMatchers.any()))
+        .thenReturn(userResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user-id"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userName").value("ngakezzy"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value("access-token"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.refreshToken").value("refresh-token"));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user-id"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.userName").value("ngakezzy"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value("access-token"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.refreshToken").value("refresh-token"));
 
-        Mockito.verify(authenticationService).authenticate(ArgumentMatchers.any());
-    }
+    Mockito.verify(authenticationService).authenticate(ArgumentMatchers.any());
+  }
 
-    @Test
-    void introspectToken_success() throws Exception {
-        IntroSpectTokenRequest request = IntroSpectTokenRequest.builder().token("access-token").build();
-        Mockito.when(authenticationService.introSpectToken(ArgumentMatchers.any()))
-                .thenReturn(IntroSpectTokenResponse.builder().valid(true).build());
+  @Test
+  void introspectToken_success() throws Exception {
+    IntroSpectTokenRequest request = IntroSpectTokenRequest.builder().token("access-token").build();
+    Mockito.when(authenticationService.introSpectToken(ArgumentMatchers.any()))
+        .thenReturn(IntroSpectTokenResponse.builder().valid(true).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/introspect")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.valid").value(true));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/auth/introspect")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.valid").value(true));
 
-        Mockito.verify(authenticationService).introSpectToken(ArgumentMatchers.any());
-    }
+    Mockito.verify(authenticationService).introSpectToken(ArgumentMatchers.any());
+  }
 
-    @Test
-    void logout_success() throws Exception {
-        LogoutRequest request = LogoutRequest.builder().token("access-token").build();
+  @Test
+  void logout_success() throws Exception {
+    LogoutRequest request = LogoutRequest.builder().token("access-token").build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/logout")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist());
 
-        Mockito.verify(authenticationService).logout(ArgumentMatchers.any());
-    }
+    Mockito.verify(authenticationService).logout(ArgumentMatchers.any());
+  }
 
-    @Test
-    void refreshToken_success() throws Exception {
-        RefreshRequest request = RefreshRequest.builder().refreshToken("refresh-token").build();
-        Mockito.when(authenticationService.refreshToken(ArgumentMatchers.any()))
-                .thenReturn(RefreshTokenResponse.builder().token("new-access-token").build());
+  @Test
+  void refreshToken_success() throws Exception {
+    RefreshRequest request = RefreshRequest.builder().refreshToken("refresh-token").build();
+    Mockito.when(authenticationService.refreshToken(ArgumentMatchers.any()))
+        .thenReturn(RefreshTokenResponse.builder().token("new-access-token").build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value("new-access-token"));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value("new-access-token"));
 
-        Mockito.verify(authenticationService).refreshToken(ArgumentMatchers.any());
-    }
+    Mockito.verify(authenticationService).refreshToken(ArgumentMatchers.any());
+  }
 
-    @Test
-    void refreshToken_blankToken_fail() throws Exception {
-        RefreshRequest request = RefreshRequest.builder().refreshToken(" ").build();
+  @Test
+  void refreshToken_blankToken_fail() throws Exception {
+    RefreshRequest request = RefreshRequest.builder().refreshToken(" ").build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(ErrorCode.REFRESH_TOKEN_INVALID.getCode()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
-                        .value(ErrorCode.REFRESH_TOKEN_INVALID.getMessage()));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.code")
+                .value(ErrorCode.REFRESH_TOKEN_INVALID.getCode()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.message")
+                .value(ErrorCode.REFRESH_TOKEN_INVALID.getMessage()));
 
-        Mockito.verifyNoInteractions(authenticationService);
-    }
+    Mockito.verifyNoInteractions(authenticationService);
+  }
 }

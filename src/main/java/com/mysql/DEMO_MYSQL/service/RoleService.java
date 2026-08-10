@@ -10,55 +10,56 @@ import com.mysql.DEMO_MYSQL.exception.ErrorCode;
 import com.mysql.DEMO_MYSQL.mapper.RoleMapper;
 import com.mysql.DEMO_MYSQL.repository.PermissionRepository;
 import com.mysql.DEMO_MYSQL.repository.RoleRepository;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
-    RoleRepository roleRepository;
-    PermissionRepository permissionRepository;
-    RoleMapper roleMapper;
+  RoleRepository roleRepository;
+  PermissionRepository permissionRepository;
+  RoleMapper roleMapper;
 
+  public RoleResponse create(RoleRequest request) {
+    if (roleRepository.existsByName(request.getName()))
+      throw new AppException(ErrorCode.PERMISSION_EXISTED);
+    Set<String> permissionNames =
+        request.getPermissions() == null ? Set.of() : request.getPermissions();
+    var permissions = permissionRepository.findAllById(permissionNames);
+    Role role = roleMapper.toRole(request);
+    role.setPermissions(new HashSet<>(permissions));
+    role = roleRepository.save(role);
+    return roleMapper.toRoleResponse(role);
+  }
 
-    public RoleResponse create(RoleRequest request) {
-        if (roleRepository.existsByName(request.getName()))
-            throw new AppException(ErrorCode.PERMISSION_EXISTED);
-        Set<String> permissionNames =
-                request.getPermissions() == null ? Set.of() : request.getPermissions();
-        var permissions = permissionRepository.findAllById(permissionNames);
-        Role role = roleMapper.toRole(request);
-        role.setPermissions(new HashSet<>(permissions));
-        role = roleRepository.save(role);
-        return roleMapper.toRoleResponse(role);
-    }
+  public List<RoleResponse> getAll() {
+    var roles = roleRepository.findAll();
+    return roles.stream().map(roleMapper::toRoleResponse).toList();
+  }
 
-    public List<RoleResponse> getAll() {
-        var roles = roleRepository.findAll();
-        return roles.stream().map(roleMapper::toRoleResponse).toList();
-    }
+  public void delete(String name) {
+    roleRepository.deleteById(name);
+  }
 
-    public void delete(String name) {
-        roleRepository.deleteById(name);
-    }
-
-    public RoleResponse updateRole(RoleUpdateRequest request, String roleName) {
-        Role role = roleRepository.findById(roleName)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        role.setDescription(request.getDescription());
-        Set<String> permissionNames = request.getPermissions() == null ? Set.of() : request.getPermissions();
-        Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(permissionNames));
-        role.setPermissions(permissions);
-        role = roleRepository.save(role);
-        return roleMapper.toRoleResponse(role);
-    }
+  public RoleResponse updateRole(RoleUpdateRequest request, String roleName) {
+    Role role =
+        roleRepository
+            .findById(roleName)
+            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+    role.setDescription(request.getDescription());
+    Set<String> permissionNames =
+        request.getPermissions() == null ? Set.of() : request.getPermissions();
+    Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(permissionNames));
+    role.setPermissions(permissions);
+    role = roleRepository.save(role);
+    return roleMapper.toRoleResponse(role);
+  }
 }

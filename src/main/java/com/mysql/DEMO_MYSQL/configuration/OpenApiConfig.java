@@ -9,19 +9,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(
-                title = "Identity Service API",
-                version = "1.0",
-                description = "API quản lý người dùng, vai trò, quyền và xác thực"
-        ),
-        security = @SecurityRequirement(name = "bearerAuth")
-)
+    info =
+        @Info(
+            title = "Identity Service API",
+            version = "1.0",
+            description = "API quản lý người dùng, vai trò, quyền và xác thực"),
+    security = @SecurityRequirement(name = "bearerAuth"))
 @SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        description = "Nhập JWT access token"
-)
-public class OpenApiConfig {
-}
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    description = "Nhập JWT access token")
+public class OpenApiConfig {}

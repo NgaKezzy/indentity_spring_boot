@@ -3,10 +3,9 @@ package com.mysql.DEMO_MYSQL.entity;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.util.Date;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Entity
 @JsonPropertyOrder({"name", "description"})
@@ -17,7 +16,6 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InvalidatedToken {
-    @Id
-    String id;
-    Date expiryTime;
+  @Id String id;
+  Date expiryTime;
 }

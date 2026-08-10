@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PermissionRequest {
-    @NotBlank(message = "Permission name không được để trống")
-    String name;
-    String description;
+  @NotBlank(message = "Permission name không được để trống") String name;
+
+  String description;
 }
