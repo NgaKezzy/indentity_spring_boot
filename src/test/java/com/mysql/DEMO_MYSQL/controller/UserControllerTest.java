@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,10 +20,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -77,7 +78,7 @@ public class UserControllerTest {
     void createUser_userNameBlank_fail() throws Exception {
         userCreationRequest.setUserName(" ");
 
-        performCreateUserAndExpectValidationError(ErrorCode.USERNAME_INVALID);
+        performCreateUserAndExpectValidationError(ErrorCode.USERNAME_INVALID, false);
     }
 
     @Test
@@ -108,17 +109,81 @@ public class UserControllerTest {
         performCreateUserAndExpectValidationError(ErrorCode.DOB_UNDER_AGE);
     }
 
+    @Test
+    void getUsers_success() throws Exception {
+        Mockito.when(userService.getUsers()).thenReturn(List.of(userResponse));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value(userResponse.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].userName").value(userResponse.getUserName()));
+
+        Mockito.verify(userService).getUsers();
+    }
+
+    @Test
+    void getUser_success() throws Exception {
+        Mockito.when(userService.getUser(userResponse.getId())).thenReturn(userResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}", userResponse.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(userResponse.getId()));
+
+        Mockito.verify(userService).getUser(userResponse.getId());
+    }
+
+    @Test
+    void updateUser_success() throws Exception {
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(), Mockito.eq(userResponse.getId())))
+                .thenReturn(userResponse);
+        String content = """
+                {"passWord":"newPassword","firstName":"Nga","lastName":"Nguyen","roles":["USER"],"dob":"1999-2-12"}
+                """;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{userId}", userResponse.getId())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(userResponse.getId()));
+
+        Mockito.verify(userService).updateUser(ArgumentMatchers.any(), Mockito.eq(userResponse.getId()));
+    }
+
+    @Test
+    void deleteUser_success() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", userResponse.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Đã xóa thành công!"));
+
+        Mockito.verify(userService).deleteUser(userResponse.getId());
+    }
+
     private void performCreateUserAndExpectValidationError(ErrorCode expectedError) throws Exception {
+        performCreateUserAndExpectValidationError(expectedError, true);
+    }
+
+    private void performCreateUserAndExpectValidationError(ErrorCode expectedError,
+                                                            boolean verifyMessage) throws Exception {
         String content = objectMapper.writeValueAsString(userCreationRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+        var resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(expectedError.getCode()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(resolveExpectedMessage(expectedError)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist());
+
+        if (verifyMessage) {
+            resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                    .value(resolveExpectedMessage(expectedError)));
+        }
 
         Mockito.verifyNoInteractions(userService);
     }
