@@ -4,12 +4,13 @@ import com.mysql.DEMO_MYSQL.dto.request.authent.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
-import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.RefreshTokenResponse;
+import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.entity.InvalidatedToken;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
+import com.mysql.DEMO_MYSQL.mapper.UserMapper;
 import com.mysql.DEMO_MYSQL.repository.InvalidatedTokenRepository;
 import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -39,6 +39,9 @@ class AuthenticationServiceTest {
 
     @Mock
     InvalidatedTokenRepository invalidatedTokenRepository;
+
+    @Mock
+    UserMapper userMapper;
 
     @InjectMocks
     AuthenticationService authenticationService;
@@ -67,10 +70,11 @@ class AuthenticationServiceTest {
     @Test
     void authenticate_validCredentials_success() {
         Mockito.when(userRepository.findByUserName("ngakezzy")).thenReturn(Optional.of(user));
+        mockUserResponse();
 
-        AuthenticationResponse result = authenticationService.authenticate(authenticationRequest);
+        UserResponse result = authenticationService.authenticate(authenticationRequest);
 
-        assertTrue(result.isAuthenticated());
+        assertEquals("ngakezzy", result.getUserName());
         assertNotNull(result.getToken());
         assertNotNull(result.getRefreshToken());
     }
@@ -107,7 +111,8 @@ class AuthenticationServiceTest {
     @Test
     void refreshToken_validRefreshToken_success() throws Exception {
         Mockito.when(userRepository.findByUserName("ngakezzy")).thenReturn(Optional.of(user));
-        AuthenticationResponse authentication = authenticationService.authenticate(authenticationRequest);
+        mockUserResponse();
+        UserResponse authentication = authenticationService.authenticate(authenticationRequest);
 
         RefreshTokenResponse result = authenticationService.refreshToken(
                 RefreshRequest.builder().refreshToken(authentication.getRefreshToken()).build());
@@ -129,7 +134,8 @@ class AuthenticationServiceTest {
     @Test
     void logout_validToken_savesInvalidatedToken() throws Exception {
         Mockito.when(userRepository.findByUserName("ngakezzy")).thenReturn(Optional.of(user));
-        AuthenticationResponse authentication = authenticationService.authenticate(authenticationRequest);
+        mockUserResponse();
+        UserResponse authentication = authenticationService.authenticate(authenticationRequest);
 
         authenticationService.logout(LogoutRequest.builder().token(authentication.getToken()).build());
 
@@ -137,5 +143,13 @@ class AuthenticationServiceTest {
         Mockito.verify(invalidatedTokenRepository).save(captor.capture());
         assertNotNull(captor.getValue().getId());
         assertNotNull(captor.getValue().getExpiryTime());
+    }
+
+    private void mockUserResponse() {
+        Mockito.when(userMapper.toUserResponse(user))
+                .thenReturn(UserResponse.builder()
+                        .id("user-id")
+                        .userName("ngakezzy")
+                        .build());
     }
 }

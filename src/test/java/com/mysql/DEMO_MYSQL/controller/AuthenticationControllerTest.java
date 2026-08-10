@@ -4,14 +4,10 @@ import com.mysql.DEMO_MYSQL.dto.request.authent.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
-import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.IntroSpectTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.RefreshTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
-import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
-import com.mysql.DEMO_MYSQL.mapper.UserMapper;
-import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.mysql.DEMO_MYSQL.service.AuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -26,8 +22,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.Optional;
-
 @WebMvcTest(AuthenticationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AuthenticationControllerTest {
@@ -40,32 +34,20 @@ class AuthenticationControllerTest {
     @MockitoBean
     AuthenticationService authenticationService;
 
-    @MockitoBean
-    UserRepository userRepository;
-
-    @MockitoBean
-    UserMapper userMapper;
-
     @Test
     void authenticate_success() throws Exception {
         AuthenticationRequest request = AuthenticationRequest.builder()
                 .userName("ngakezzy")
                 .passWord("12345678")
                 .build();
-        AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
-                .authenticated(true)
-                .token("access-token")
-                .refreshToken("refresh-token")
-                .build();
-        User user = User.builder().id("user-id").userName("ngakezzy").build();
         UserResponse userResponse = UserResponse.builder()
                 .id("user-id")
                 .userName("ngakezzy")
+                .token("access-token")
+                .refreshToken("refresh-token")
                 .build();
         Mockito.when(authenticationService.authenticate(ArgumentMatchers.any()))
-                .thenReturn(authenticationResponse);
-        Mockito.when(userRepository.findByUserName("ngakezzy")).thenReturn(Optional.of(user));
-        Mockito.when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+                .thenReturn(userResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -79,8 +61,6 @@ class AuthenticationControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.refreshToken").value("refresh-token"));
 
         Mockito.verify(authenticationService).authenticate(ArgumentMatchers.any());
-        Mockito.verify(userRepository).findByUserName("ngakezzy");
-        Mockito.verify(userMapper).toUserResponse(user);
     }
 
     @Test
@@ -145,6 +125,6 @@ class AuthenticationControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value(ErrorCode.REFRESH_TOKEN_INVALID.getMessage()));
 
-        Mockito.verifyNoInteractions(authenticationService, userRepository, userMapper);
+        Mockito.verifyNoInteractions(authenticationService);
     }
 }

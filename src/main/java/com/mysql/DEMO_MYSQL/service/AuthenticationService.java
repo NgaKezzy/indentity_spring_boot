@@ -4,13 +4,14 @@ import com.mysql.DEMO_MYSQL.dto.request.authent.AuthenticationRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
-import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.IntroSpectTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.RefreshTokenResponse;
+import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
 import com.mysql.DEMO_MYSQL.entity.InvalidatedToken;
 import com.mysql.DEMO_MYSQL.entity.User;
 import com.mysql.DEMO_MYSQL.exception.AppException;
 import com.mysql.DEMO_MYSQL.exception.ErrorCode;
+import com.mysql.DEMO_MYSQL.mapper.UserMapper;
 import com.mysql.DEMO_MYSQL.repository.InvalidatedTokenRepository;
 import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.nimbusds.jose.*;
@@ -43,6 +44,7 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    UserMapper userMapper;
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -58,7 +60,7 @@ public class AuthenticationService {
     static final Logger log =
             LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public UserResponse authenticate(AuthenticationRequest request) {
         User user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -70,11 +72,10 @@ public class AuthenticationService {
         }
         String token = generateToken(user, false);
         String refreshToken = generateToken(user, true);
-        return AuthenticationResponse.builder()
-                .authenticated(true)
-                .token(token)
-                .refreshToken(refreshToken)
-                .build();
+        UserResponse userResponse = userMapper.toUserResponse(user);
+        userResponse.setToken(token);
+        userResponse.setRefreshToken(refreshToken);
+        return userResponse;
 
     }
 

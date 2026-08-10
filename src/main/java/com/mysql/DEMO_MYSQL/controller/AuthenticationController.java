@@ -5,14 +5,9 @@ import com.mysql.DEMO_MYSQL.dto.request.authent.IntroSpectTokenRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.LogoutRequest;
 import com.mysql.DEMO_MYSQL.dto.request.authent.RefreshRequest;
 import com.mysql.DEMO_MYSQL.dto.response.ApiResponse;
-import com.mysql.DEMO_MYSQL.dto.response.authent.AuthenticationResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.IntroSpectTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.authent.RefreshTokenResponse;
 import com.mysql.DEMO_MYSQL.dto.response.user.UserResponse;
-import com.mysql.DEMO_MYSQL.exception.AppException;
-import com.mysql.DEMO_MYSQL.exception.ErrorCode;
-import com.mysql.DEMO_MYSQL.mapper.UserMapper;
-import com.mysql.DEMO_MYSQL.repository.UserRepository;
 import com.mysql.DEMO_MYSQL.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
@@ -39,20 +34,13 @@ import java.text.ParseException;
 @SecurityRequirements
 public class AuthenticationController {
     AuthenticationService authenticationService;
-    UserRepository userRepository;
-    UserMapper userMapper;
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping("/login")
     @Operation(summary = "Đăng nhập", description = "Xác thực tài khoản và trả về access token cùng refresh token")
     ApiResponse<UserResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        var result = authenticationService.authenticate(request);
-        var user = userRepository.findByUserName(request.getUserName())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        UserResponse userResponse = userMapper.toUserResponse(user);
-        userResponse.setToken(result.getToken());
-        userResponse.setRefreshToken(result.getRefreshToken());
+        UserResponse userResponse = authenticationService.authenticate(request);
         return ApiResponse.<UserResponse>builder().data(userResponse).success(true).build();
     }
 
