@@ -54,7 +54,6 @@ public class UserControllerTest {
     @Test
     void createUser_validRequest_success() throws Exception {
         // GIVEN
-
         String content = objectMapper.writeValueAsString(userCreationRequest);
         Mockito.when(userService.createUser(ArgumentMatchers.any())).thenReturn(userResponse);
 
@@ -63,7 +62,12 @@ public class UserControllerTest {
                         MockMvcRequestBuilders.post("/users").contentType(MediaType.APPLICATION_JSON_VALUE).content(content))
                 .andExpect(
                         MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("code").value("1000"));
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value("1000"))
+                .andExpect(MockMvcResultMatchers.jsonPath("data.id").value("465156486421cf"))
+                .andExpect(MockMvcResultMatchers.jsonPath("data.userName").value("ngakezzy"))
+                .andExpect(MockMvcResultMatchers.jsonPath("data.firstName").value("Nga"))
+                .andExpect(MockMvcResultMatchers.jsonPath("data.lastName").value("Nguyen"))
+                .andExpect(MockMvcResultMatchers.jsonPath("data.dob").value(dob.toString()));
 
     }
 }
